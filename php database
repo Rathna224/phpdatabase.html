@@ -1,0 +1,72 @@
+CREATE DATABASE bookdb;
+
+CREATE TABLE books (
+    book_id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    book_title VARCHAR(255) NOT NULL,
+    book_author VARCHAR(255) NOT NULL,
+    edition VARCHAR(50),
+    year INT(4),
+    publisher_name VARCHAR(255)
+);
+
+<?php
+$servername = "localhost";
+$username = "username";
+$password = "password";
+$dbname = "bookdb";
+
+$conn = mysqli_connect($servername, $username, $password, $dbname);
+
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+?>
+
+<?php
+$sql = "INSERT INTO books (book_title, book_author, edition, year, publisher_name)
+VALUES ('The Great Gatsby', 'F. Scott Fitzgerald', '1st', 1925, 'Charles Scribner\'s Sons'),
+       ('To Kill a Mockingbird', 'Harper Lee', '1st', 1960, 'J. B. Lippincott & Co.'),
+       ('1984', 'George Orwell', '1st', 1949, 'Secker & Warburg')";
+
+if (mysqli_query($conn, $sql)) {
+    echo "Records inserted successfully.";
+} else {
+    echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+}
+?>
+
+<?php
+// Operation 1: Get all books in reference
+$sql = "SELECT COUNT(*) AS count FROM books WHERE year < 2000";
+$result = mysqli_query($conn, $sql);
+$row = mysqli_fetch_assoc($result);
+$ref_count = $row["count"];
+
+// Operation 2: Get all books in stock
+$sql = "SELECT COUNT(*) AS count FROM books WHERE year >= 2000";
+$result = mysqli_query($conn, $sql);
+$row = mysqli_fetch_assoc($result);
+$stock_count = $row["count"];
+
+// Operation 3: Get all books in circulation
+$sql = "SELECT COUNT(*) AS count FROM books WHERE edition > '1st'";
+$result = mysqli_query($conn, $sql);
+$row = mysqli_fetch_assoc($result);
+$circ_count = $row["count"];
+
+// Operation 4: Get all books by a specific author
+$sql = "SELECT * FROM books WHERE book_author = 'Harper Lee'";
+$result = mysqli_query($conn, $sql);
+
+echo "Number of books in reference: " . $ref_count . "<br>";
+echo "Number of books in stock: " . $stock_count . "<br>";
+echo "Number of books in circulation: " . $circ_count . "<br>";
+echo "Books by Harper Lee:<br>";
+if (mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "Title: " . $row["book_title"] . ", Edition: " . $row["edition"] . "<br>";
+
+
+
+
+
